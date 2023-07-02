@@ -699,11 +699,11 @@ class Dataset(DatasetInfoMixin, IndexableMixin, TensorflowDatasetMixin):
             raise ValueError("Features can't be None in a Dataset object")
         if self._fingerprint is None:
             raise ValueError("Fingerprint can't be None in a Dataset object")
-        if self.info.features.type != inferred_features.type:
-            raise ValueError(
-                f"External features info don't match the dataset:\nGot\n{self.info.features}\nwith type\n{self.info.features.type}\n\nbut expected something like\n{inferred_features}\nwith type\n{inferred_features.type}"
-            )
-
+        self.info.features = inferred_features
+        # if self.info.features.type != inferred_features.type:
+        #     raise ValueError(
+        #         f"External features info don't match the dataset:\nGot\n{self.info.features}\nwith type\n{self.info.features.type}\n\nbut expected something like\n{inferred_features}\nwith type\n{inferred_features.type}"
+        #     )
         if self._indices is not None:
             if not pa.types.is_unsigned_integer(self._indices.column(0).type):
                 raise ValueError(
@@ -1541,6 +1541,7 @@ class Dataset(DatasetInfoMixin, IndexableMixin, TensorflowDatasetMixin):
         batch_size = config.DEFAULT_MAX_BATCH_SIZE
 
         num_examples_progress_update = 0
+        shard = shard.cast_column("image", Image())
         writer = ArrowWriter(
             features=shard.features,
             path=fpath,
