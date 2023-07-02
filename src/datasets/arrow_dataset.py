@@ -1541,7 +1541,8 @@ class Dataset(DatasetInfoMixin, IndexableMixin, TensorflowDatasetMixin):
         batch_size = config.DEFAULT_MAX_BATCH_SIZE
 
         num_examples_progress_update = 0
-        shard = shard.cast_column("image", Image())
+        if "image" in shard[0] and not isinstance(shard[0].get("image"), Image):
+            shard = shard.cast_column("image", Image())
         writer = ArrowWriter(
             features=shard.features,
             path=fpath,
