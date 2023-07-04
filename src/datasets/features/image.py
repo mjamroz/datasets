@@ -100,6 +100,8 @@ class Image:
         """
         if config.PIL_AVAILABLE:
             import PIL.Image
+            from PIL import ImageFile
+            ImageFile.LOAD_TRUNCATED_IMAGES = True
         else:
             raise ImportError("To support encoding images, please install 'Pillow'.")
 
